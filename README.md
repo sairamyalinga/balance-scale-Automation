@@ -9,7 +9,6 @@ This script automates the process of solving the puzzle on this [website](http:/
 - Python 3.x
 - Selenium
 - Chrome WebDriver
-- Webdriver Manager
 
 ## Installation
 
@@ -57,6 +56,6 @@ This script automates the process of solving the puzzle on this [website](http:/
 3. The script clicks the "Weigh" button to perform the initial weighing.
 4. It retrieves the equation displayed on the webpage after the weighing to identify the relation to proceed next.
 5. Based on the equation result, the script performs appropriate actions to solve the puzzle.
-6. Once the puzzle is solved, the script terminates.
+6. Once the puzzle is solved, the script terminates and write the output to a output.txt file.
 
 
