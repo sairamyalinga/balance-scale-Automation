@@ -8,24 +8,43 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+# Function to press reset 
 def reset_button():
     driver.find_element(By.XPATH, "//*[text()='Reset']").click()
 
+# Function to get equation of balance scale
 def get_equation(n):
     eq = WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.XPATH, f"//ol//li[{n}]"))
-    )
+        EC.presence_of_element_located((By.XPATH, f"//ol//li[{n}]")))
     return eq.text
+
+# Function to add gold bar to the balance scale
 def add_element(id, key):
     driver.find_element(By.ID, id).send_keys(key)
 
+# Function to click the result button
 def result(ans):
     div_coins = driver.find_element(By.CLASS_NAME, "coins")
     button = div_coins.find_element(
                     By.XPATH, f".//button[text()='{ans}']")
     button.click()
+    write_to_file(ans)
 
-
+# Function to write to the output.txt file 
+def write_to_file(ans):
+    alert = WebDriverWait(driver, 5).until(EC.alert_is_present())
+    alert = driver.switch_to.alert
+    alert_text = alert.text
+    time.sleep(5)
+    alert.accept()
+    with open('output.txt', 'w') as f:
+        f.write(alert_text + '\n')
+        f.write(f'The fake gold bar is number {ans}\n')
+        weighings = driver.find_elements(By.XPATH, "//ol//li")
+        f.write(f'Number of weighing is {len(weighings)}\n')
+        for index, item in enumerate(weighings, start=1):
+            f.write(f"Weighing {index}: {item.text}\n")
+    driver.quit()
 
 try:
     driver = webdriver.Chrome(service=ChromeService(
@@ -41,7 +60,6 @@ try:
     weigh = driver.find_element(By.ID, "weigh")
     weigh.click()
     tt = get_equation(1)
-    print(tt)
     if "=" in tt:
         reset_button()
         add_element("left_0", 6)
@@ -87,11 +105,6 @@ try:
         if ">" in ntt:
             result(rhs[1])
             
-
-
 except Exception as e:
     logging.error(f"An error occurred: {str(e)}")
 
-finally:
-    time.sleep(5)
-    driver.quit()
